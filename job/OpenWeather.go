@@ -9,6 +9,7 @@ import (
 type openWeatherCronjob struct {
 	name string
 	latestExecuteTime time.Time
+
 	dbctx context.Context
 }
 
@@ -28,6 +29,9 @@ func (k openWeatherCronjob) SetLatestExecuteTime(t time.Time) {
 	panic("implement me")
 }
 
+func (k openWeatherCronjob) IsTimeToRun() bool {
+	return true
+}
 func NewOpenWeatherSource(name string) _interface.Cronjob{
 	return &openWeatherCronjob{
 		name: name,

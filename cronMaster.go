@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	. "github.com/TeamCroffle/weather-scrapper/job"
 	_interface "github.com/TeamCroffle/weather-scrapper/interface"
-
+	. "github.com/TeamCroffle/weather-scrapper/job"
 )
 
 
@@ -15,6 +14,10 @@ func main() {
 	}
 
 	for _, j := range jobs {
+		if !j.IsTimeToRun() {
+			continue
+		}
+
 		fmt.Println("Starting job", j.GetName())
 	}
 }
