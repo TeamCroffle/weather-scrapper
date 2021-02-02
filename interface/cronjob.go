@@ -10,6 +10,7 @@ type (
 		GetName() string
 		GetLatestExecuteTime() time.Time
 		SetLatestExecuteTime(t time.Time)
+		IsTimeToRun() bool
 	}
 )
 
