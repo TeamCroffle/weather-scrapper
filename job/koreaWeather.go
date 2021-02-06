@@ -1,13 +1,13 @@
 package scrape
 
 import (
-	"time"
 	_interface "github.com/TeamCroffle/weather-scrapper/interface"
+	"time"
 )
 
 type koreaWeatherCronjob struct {
 	name string
-	periodMin float64
+	period time.Duration
 }
 
 func (k koreaWeatherCronjob) Run() error {
@@ -19,16 +19,12 @@ func (k koreaWeatherCronjob) GetName() string {
 }
 
 func (k koreaWeatherCronjob) IsTimeToRun(executeTime time.Time) bool {
-	duration := time.Since(executeTime)
-	if k.periodMin < duration.Minutes() {
-		return false
-	}
-	return true
+	return time.Now().After(executeTime.Add(k.period))
 }
 
 func NewKoreaWeatherSource(name string) _interface.Cronjob{
 	return &koreaWeatherCronjob{
 		name: name,
-		periodMin: 60, // 1 hour
+	 	period: time.Minute * 10,
 	}
 }

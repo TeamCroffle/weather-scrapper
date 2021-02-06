@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+
 func main() {
 	jobs := []_interface.Cronjob{
 		NewKoreaWeatherSource("기상청"),
@@ -20,9 +21,10 @@ func main() {
 	cronHistory := NewCronjobHistory(dbClient, &ctx)
 
 	for _, j := range jobs {
-		lastExecuteTime := cronHistory.GetLastTime(j.GetName())
-		if !j.IsTimeToRun(lastExecuteTime) {
+		lastExecuteTime, isFirstTime := cronHistory.GetLastTime(j.GetName())
+		if j.IsTimeToRun(lastExecuteTime) || isFirstTime {
 			fmt.Println("Oh, Hello", j.GetName())
+			cronHistory.LogExecute(j.GetName(), time.Now())
 			continue
 		}
 	}

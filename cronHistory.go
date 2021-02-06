@@ -18,8 +18,10 @@ type (
 	}
 
 	CronjobHistory struct {
-		name        string `bson:"name"`
-		executeTime time.Time `bson:"executeTime"`
+		//ID    primitive.ObjectID `bson:"_id"`
+		Name string
+		ExecuteTime time.Time
+
 		dbClient *mongo.Client
 		dbCtx *context.Context
 		collectionInfo DbCollectionInfo
@@ -31,22 +33,26 @@ const (
 	DBName = "weather"
 )
 
-func (c CronjobHistory) GetLastTime(name string) time.Time {
-	collection := c.getCollection()
-	queryOptions := options.FindOneOptions{Sort:bson.D{{"executeTime", -1}}}
+func (c CronjobHistory) GetLastTime(name string) (lastTime time.Time, isFirstTime bool) {
+	col := c.getCollection()
 
 	var result CronjobHistory
-	if err := collection.FindOne(*c.dbCtx, bson.D{{Key: "name", Value: c.name}}, &queryOptions).Decode(result); err != nil {
-		log.Fatal("Could not search a last CronjobHistory; ", err)
+	opt := options.FindOneOptions{Sort:bson.D{{"ExecuteTime", -1}}}
+	filter := bson.D{{"Name", "기상청"}}
+
+	err := col.FindOne(*c.dbCtx, filter, &opt).Decode(&result);
+	// Empty result, Run first time
+	if err != nil && result.Name == "" {
+		return time.Now(), true
 	}
-	return result.executeTime
+	return result.ExecuteTime, false
 }
 
 func (c CronjobHistory) LogExecute(name string, lastExecuteTime time.Time) bool {
 	collection := c.getCollection()
 	insertOneResult, err := collection.InsertOne(*c.dbCtx, bson.D{
-		{Key: "name", Value: c.name},
-		{Key: "executeTime", Value: time.Now()},
+		{Key: "Name", Value: name},
+		{Key: "ExecuteTime", Value: lastExecuteTime},
 	})
 	if err != nil {
 		log.Fatal(err)
