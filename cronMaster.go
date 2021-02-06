@@ -14,7 +14,7 @@ func main() {
 		// NewOpenWeatherSource("OpenWeather"),
 	}
 	// Config MongoDB client with connection
-	dbClient := MongoConn()
+	dbClient := MongoConn(CreateDBConfigFromEnv())
 	defer dbClient.Disconnect(context.Background())
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	cronHistory := NewCronjobHistory(dbClient, &ctx)
@@ -27,4 +27,3 @@ func main() {
 		}
 	}
 }
-

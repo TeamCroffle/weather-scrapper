@@ -8,13 +8,21 @@ import (
 	"log"
 )
 
-func MongoConn()(client *mongo.Client) {
+type DBConfig struct {
+	Host string
+	Password string
+	Username string
+	Port string
+}
+
+func MongoConn(dbConfig *DBConfig) (client *mongo.Client) {
 	credential := options.Credential{
-		Username: "root",
-		Password: "example",
+		Username: dbConfig.Username,
+		Password: dbConfig.Password,
 	}
 
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017").SetAuth(credential)
+	connectionUri := fmt.Sprintf( "mongodb://%s:%s", dbConfig.Host, dbConfig.Port)
+	clientOptions := options.Client().ApplyURI(connectionUri).SetAuth(credential)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -29,3 +37,4 @@ func MongoConn()(client *mongo.Client) {
 	fmt.Println("MongoDB Connection Made")
 	return client
 }
+
