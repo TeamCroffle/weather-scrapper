@@ -1,16 +1,13 @@
 package scrape
 
 import (
-	"context"
 	_interface "github.com/TeamCroffle/weather-scrapper/interface"
 	"time"
 )
 
 type koreaWeatherCronjob struct {
 	name string
-	latestExecuteTime time.Time
-	isTimeToRun bool
-	dbctx context.Context
+	period time.Duration
 }
 
 func (k koreaWeatherCronjob) Run() error {
@@ -21,20 +18,13 @@ func (k koreaWeatherCronjob) GetName() string {
 	return k.name
 }
 
-func (k koreaWeatherCronjob) GetLatestExecuteTime() time.Time {
-	panic("implement me")
-}
-
-func (k koreaWeatherCronjob) SetLatestExecuteTime(t time.Time) {
-	panic("implement me")
-}
-
-func (k koreaWeatherCronjob) IsTimeToRun() bool {
-	return true
+func (k koreaWeatherCronjob) IsTimeToRun(executeTime time.Time) bool {
+	return time.Now().After(executeTime.Add(k.period))
 }
 
 func NewKoreaWeatherSource(name string) _interface.Cronjob{
 	return &koreaWeatherCronjob{
 		name: name,
+	 	period: time.Minute * 10,
 	}
 }
