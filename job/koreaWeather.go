@@ -1,8 +1,7 @@
 package scrape
 
 import (
-	_interface "github.com/TeamCroffle/weather-scrapper/interface"
-	"time"
+	"context"
 )
 
 type koreaWeatherCronjob struct {
@@ -23,7 +22,6 @@ func (k koreaWeatherCronjob) IsTimeToRun(executeTime time.Time) bool {
 	if k.periodMin < duration.Minutes() {
 		return false
 	}
-	return true
 }
 
 func NewKoreaWeatherSource(name string) _interface.Cronjob{
